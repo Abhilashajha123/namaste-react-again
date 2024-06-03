@@ -2,6 +2,7 @@ import RestaurantCard from "./RestaurantCard";
 import { useEffect, useState } from "react";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router-dom";
+import useOnlineStatus from "../utils/customHooks/useOnlineStatus";
 
 const Body = () => {
   // State Variable
@@ -30,6 +31,16 @@ const Body = () => {
   };
 
   // Function of filterd By TOP Rating
+
+  const onlinestatus = useOnlineStatus();
+
+  if (onlinestatus === false) {
+    return (
+      <div>
+        <h1>Please check your internet connectivity</h1>
+      </div>
+    );
+  }
 
   const filteredList = () => {
     const filteredResturant = listOfRestaurant.filter(
