@@ -1,47 +1,41 @@
 import Shimmer from "./Shimmer";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import useRestaurantMenu from "../utils/customHooks/useRestaurantMenu";
+import RestaurantCategory from "./RestaurantCategory";
 
 const RestaurantMenu = () => {
   const { resId } = useParams();
   const resInfo = useRestaurantMenu(resId);
+  const [showIndex, setShowIndex] = useState(null); // ✅ This is valid
 
-  if (resInfo === null) {
-    return <Shimmer />;
-  }
+  if (!resInfo) return <Shimmer />;
 
-  const { name, cuisines, areaName, sla, expectationNotifiers } =
-    resInfo?.cards[2]?.card?.card?.info;
+  const info = resInfo?.cards?.find(c => c?.card?.card?.info)?.card?.card?.info;
+  if (!info) return <h2>Menu info not available</h2>;
 
-  const restitems =
-    resInfo?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards[2]?.card?.card
-      ?.itemCards;
+  const { name, cuisines } = info;
+
+  const categories = resInfo?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
+    (c) => c.card?.card?.["@type"] === "type.googleapis.com/swiggy.presentation.food.v2.ItemCategory"
+  );
 
   return (
-    <div>
-      <h2>{name}</h2>
-      <div className="">
-        <h3>4.0 (1K+ ratings)₹200 for two</h3>
-        <h4>{cuisines.join(", ")} </h4>
-        <p>
-          <b>Outlet</b> {areaName}
-        </p>
-        <p>
-          <b>
-            {sla.minDeliveryTime}-{sla.maxDeliveryTime} mins
-          </b>
-        </p>
-        <span>{expectationNotifiers[0].text}</span>
-      </div>
-      <h4>Recommended</h4>
-      <ul>
-        {restitems?.map((item) => (
-          <li key={item.card.info.id}>
-            {item.card.info.name} - {" Rs. "}
-            {item.card.info.defaultPrice / 100 || item.card.info.price / 100}
-          </li>
-        ))}
-      </ul>
+    <div className="text-center">
+      <h1 className="font-bold my-6 text-2xl">{name}</h1>
+      <p className="font-bold">{cuisines.join(", ")}</p>
+
+      {categories.map((category, index) => (
+        <RestaurantCategory
+          key={category.card?.card?.title || index}
+          data={category.card?.card}
+          showItems={index === showIndex}
+           setShowIndex={() => {
+            console.log("Setting showIndex to:", index);
+            setShowIndex(index);
+          }}
+        />
+      ))}
     </div>
   );
 };

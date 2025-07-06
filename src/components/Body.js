@@ -1,4 +1,4 @@
-import RestaurantCard from "./RestaurantCard";
+import RestaurantCard ,{ResturantCardHighRating} from "./RestaurantCard";
 import { useEffect, useState } from "react";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router-dom";
@@ -10,7 +10,13 @@ const Body = () => {
   const [searchTxt, setSearchTxt] = useState("");
   const [filteredrestaurant, setFilteredrestaurant] = useState([]);
 
+
+  const RestaurantCardWithHighRating = ResturantCardHighRating(RestaurantCard);
+
   // useEffect
+
+  //  console.log("body render",listOfRestaurant[0].info);
+  //   console.log("body render",listOfRestaurant);
 
   useEffect(() => {
     fetchData();
@@ -20,7 +26,10 @@ const Body = () => {
     const data = await fetch(
       "https://www.swiggy.com/dapi/restaurants/list/v5?lat=25.59080&lng=85.13480&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
     );
+
+    
     const json = await data.json();
+   
     setListOfRestaurant(
       json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
     );
@@ -44,7 +53,7 @@ const Body = () => {
 
   const filteredList = () => {
     const filteredResturant = listOfRestaurant.filter(
-      (res) => res.info.avgRating >= 4
+      (res) => res.info.avgRating >= 3
     );
     setListOfRestaurant(filteredResturant);
   };
@@ -53,8 +62,8 @@ const Body = () => {
     <Shimmer />
   ) : (
     <div className="body">
-      <div className="filter">
-        <div className="search">
+      <div className="filter flex">
+        <div className="search m-4 p-4">
           <input
             type="text"
             className="search-box"
@@ -62,13 +71,8 @@ const Body = () => {
               setSearchTxt(e.target.value);
             }}
           />
-          <button
+          <button className="px-4 py-2 bg-green-200 m-4 rounded-lg"
             onClick={() => {
-              //filtered the restaurant card
-              //search text
-
-              console.log(searchTxt);
-
               const filteredTrstaurant = listOfRestaurant.filter((res) =>
                 res.info.name.toLowerCase().includes(searchTxt.toLowerCase())
               );
@@ -78,14 +82,29 @@ const Body = () => {
             search
           </button>
         </div>
-        <button className="filter-btn" onClick={filteredList}>
-          Top Rated Restaurants
-        </button>
+        <div className="search m-4 p-4 flex items-center">
+            <button className="px-4 py-2 bg-gray-100" onClick={filteredList}>
+              Top Rated Restaurants
+            </button>
+        </div>
+        
       </div>
-      <div className="res-container">
+      <div className="flex flex-wrap">
         {filteredrestaurant.map((restaurant) => (
-          <Link to={"/restaurants/" + restaurant.info.id}>
-            <RestaurantCard key={restaurant.info.id} resData={restaurant} />
+          <Link 
+           key={restaurant.info.id}
+          to={"/restaurants/" + restaurant.info.id}>
+
+          {/**if the restaurant rated is more than 4.3 it marks as less preference 
+          
+           restaurant.info.id > 1000 ? <RestaurantCardWithHighRating resData={restaurant}/> : <RestaurantCard key={restaurant.info.id} resData={restaurant} />*/
+          
+          }
+          {
+
+           restaurant.info.cuisines.length > 1?  <RestaurantCardWithHighRating  resData={restaurant}/> :  <RestaurantCard key={restaurant.info.id} resData={restaurant}/>
+          }
+          
           </Link>
         ))}
       </div>
