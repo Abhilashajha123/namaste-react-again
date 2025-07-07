@@ -32,6 +32,7 @@ const RestaurantMenu = () => {
           showItems={index === showIndex}
            setShowIndex={() => {
             console.log("Setting showIndex to:", index);
+            showIndex=== index ? setShowIndex(null) :
             setShowIndex(index);
           }}
         />

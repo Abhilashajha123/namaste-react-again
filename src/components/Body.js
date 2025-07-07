@@ -1,8 +1,10 @@
 import RestaurantCard ,{ResturantCardHighRating} from "./RestaurantCard";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router-dom";
 import useOnlineStatus from "../utils/customHooks/useOnlineStatus";
+import UserContext from "../utils/UserContext";
+
 
 const Body = () => {
   // State Variable
@@ -10,13 +12,10 @@ const Body = () => {
   const [searchTxt, setSearchTxt] = useState("");
   const [filteredrestaurant, setFilteredrestaurant] = useState([]);
 
+  const { loggedInuser, setUserName } = useContext(UserContext);
+ 
 
   const RestaurantCardWithHighRating = ResturantCardHighRating(RestaurantCard);
-
-  // useEffect
-
-  //  console.log("body render",listOfRestaurant[0].info);
-  //   console.log("body render",listOfRestaurant);
 
   useEffect(() => {
     fetchData();
@@ -66,7 +65,7 @@ const Body = () => {
         <div className="search m-4 p-4">
           <input
             type="text"
-            className="search-box"
+            className="search-box border-2"
             onChange={(e) => {
               setSearchTxt(e.target.value);
             }}
@@ -87,7 +86,14 @@ const Body = () => {
               Top Rated Restaurants
             </button>
         </div>
-        
+
+        <div className="search m-4 p-4 flex items-center">
+          <label>Username : </label>
+          <input type="text" className="border-2 ml-1 p-2"
+          value={loggedInuser}
+          onChange={(e)=>setUserName(e.target.value)}
+          />
+        </div>
       </div>
       <div className="flex flex-wrap">
         {filteredrestaurant.map((restaurant) => (

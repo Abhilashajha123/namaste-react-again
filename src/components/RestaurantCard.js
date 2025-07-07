@@ -1,4 +1,6 @@
+import { useContext } from "react";
 import { CDN_URL } from "../utils/constants";
+import UserContext from "../utils/UserContext";
 
 const color = {
   color: "rgba(2, 6, 12, 0.75)",
@@ -8,6 +10,7 @@ const padding = { paddingLeft: "10px" };
 const RestaurantCard = (props = null) => {
   const { resData } = props;
   const { name, avgRating, sla, cuisines } = resData?.info;
+  const {loggedInuser} = useContext(UserContext);
 
   return (
     <div className="m-4 p-4 w-[250px] rounded-lg bg-gray-50 hover:bg-gray-200">
@@ -21,6 +24,7 @@ const RestaurantCard = (props = null) => {
       </h4>
       <h4 style={{ ...color, ...padding }}>{avgRating} star</h4>
       <h4 style={{ ...color, ...padding }}>{sla.slaString}</h4>
+      <h5>{loggedInuser}</h5>
     </div>
   );
 };
