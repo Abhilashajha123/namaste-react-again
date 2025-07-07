@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useContext, useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import Header from "./components/Header";
 import Body from "./components/Body";
@@ -8,6 +8,7 @@ import Contact from "./pages/Contact";
 import Error from "./pages/Error";
 import RestaurantMenu from "./components/RestaurantMenu";
 import Shimmer from "./components/Shimmer";
+import UserContext from "./utils/UserContext";
 //import Grocery from "./components/Grocery";
 
 //Chunking
@@ -18,12 +19,26 @@ import Shimmer from "./components/Shimmer";
 // dynamic import
 
 const Grocery = lazy(() => import("./components/Grocery"));
+const About   = lazy(() => import("./pages/About"));
 
 const AppLayout = () => {
+  const[username,setUserName] = useState("");
+
+  useEffect(()=>{
+
+    const data ={
+      name:"Abhilasha kumari"
+    };
+    setUserName(data.name);
+
+  },[]);
+  
   return (
     <div className="app">
-      <Header />
-      <Outlet />
+      <UserContext.Provider value={{loggedInuser:username, setUserName}}>
+          <Header />
+          <Outlet />
+      </UserContext.Provider>
     </div>
   );
 };
@@ -39,7 +54,11 @@ const appRouter = createBrowserRouter([
       },
       {
         path: "/about",
-        element: <About />,
+        element: (
+          <Suspense fallback={<h1>Loading....</h1>}>
+             <About />
+          </Suspense>
+        ),
       },
       {
         path: "/contact",

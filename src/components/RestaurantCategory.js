@@ -7,8 +7,9 @@ const RestaurantCategory = ({data,showItems,setShowIndex })=>{
 const itemslist = data.itemCards; 
 
  const handleClick = () => {
-    
+    console.log("hghggh");
     setShowIndex();  // ✅ calling function passed from parent
+
   };
 
     return<div>
